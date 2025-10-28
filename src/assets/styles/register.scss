@@ -1,0 +1,474 @@
+/* 注册页面样式 */
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+    pointer-events: none;
+  }
+}
+
+.register-section {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.register-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.15),
+    0 16px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 48px;
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    padding: 32px 24px;
+    margin: 20px;
+    border-radius: 16px;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -200% 0; }
+}
+
+.register-form {
+  width: 100%;
+  padding: 0;
+
+  .title {
+    text-align: center;
+    margin: 0 0 32px 0;
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 28px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 0;
+
+    .form-item-half {
+      flex: 1;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+
+      .form-item-half {
+        flex: none;
+      }
+    }
+  }
+
+  .el-form-item {
+    margin-bottom: 28px;
+    position: relative;
+
+    .el-form-item__label {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .el-input {
+      .el-input__wrapper {
+        border-radius: 12px;
+        border: 2px solid #e1e8ed;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #ffffff;
+
+        &:hover {
+          border-color: #667eea;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        &.is-focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .el-input__inner {
+          font-size: 15px;
+          color: #2c3e50;
+          padding: 16px 20px;
+          height: auto;
+
+          &::placeholder {
+            color: #95a5a6;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+
+    .el-select {
+      .el-select__wrapper {
+        border-radius: 12px;
+        border: 2px solid #e1e8ed;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover {
+          border-color: #667eea;
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        &.is-focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+      }
+    }
+
+    .el-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .el-radio {
+        margin-right: 0;
+        padding: 12px 16px;
+        border: 2px solid #e1e8ed;
+        border-radius: 10px;
+        background: #ffffff;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        flex: 0 0 auto;
+        min-width: 140px;
+
+        &:hover {
+          border-color: #667eea;
+          background: rgba(102, 126, 234, 0.02);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        &.is-checked {
+          border-color: #667eea;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        &.is-disabled {
+          background: #f8f9fa;
+          border-color: #e9ecef;
+          color: #adb5bd;
+          cursor: not-allowed;
+          opacity: 0.6;
+
+          &:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #e9ecef;
+            background: #f8f9fa;
+          }
+
+          .el-radio__label {
+            color: #adb5bd;
+          }
+        }
+
+        .el-radio__input {
+          .el-radio__inner {
+            border-color: #667eea;
+            
+            &::after {
+              background-color: #667eea;
+            }
+          }
+
+          &.is-checked .el-radio__inner {
+            background-color: #667eea;
+            border-color: #667eea;
+          }
+        }
+
+        .el-radio__label {
+          font-weight: 500;
+          color: #2c3e50;
+          font-size: 14px;
+          line-height: 1.5;
+          white-space: nowrap;
+        }
+      }
+
+      // 针对较长文本的特殊处理
+      &.long-text {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        
+        .el-radio {
+          flex: 0 0 calc(50% - 6px);
+          min-width: 280px;
+          max-width: calc(50% - 6px);
+          margin-bottom: 0;
+
+          .el-radio__label {
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.6;
+            padding-left: 8px;
+            display: block;
+            width: 100%;
+            font-size: 13px;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .el-radio {
+            flex: 1 1 100%;
+            max-width: 100%;
+            min-width: 100%;
+          }
+        }
+      }
+
+      // 针对半宽度表单项中的radio组
+      .form-item-half & {
+        flex-direction: column;
+        gap: 8px;
+
+        .el-radio {
+          flex: 1 1 100%;
+          min-width: 100%;
+          max-width: 100%;
+          margin-bottom: 0;
+
+          .el-radio__label {
+            font-size: 13px;
+            white-space: normal;
+            word-break: break-word;
+          }
+        }
+      }
+    }
+  }
+
+  .login-button {
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &.is-loading {
+      opacity: 0.8;
+      cursor: not-allowed;
+    }
+  }
+
+  .link-type {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transition: width 0.3s ease;
+    }
+
+    &:hover {
+      color: #764ba2;
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.el-register-footer {
+  margin-top: 32px;
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 10px;
+  }
+
+  .register-card {
+    max-width: 100%;
+    margin: 10px;
+    padding: 24px;
+  }
+
+  .register-form {
+    .el-form-item {
+      .el-radio-group {
+        gap: 8px;
+
+        .el-radio {
+          min-width: 100px;
+          padding: 10px 12px;
+          
+          .el-radio__label {
+            font-size: 13px;
+          }
+        }
+
+        &.long-text .el-radio {
+          flex: 1 1 100%;
+          max-width: 100%;
+          min-width: 100%;
+          
+          .el-radio__label {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 动画效果 */
+.register-card {
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Element Plus 组件样式覆盖 */
+.el-form-item__error {
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.el-loading-mask {
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* 选择框下拉样式 */
+.el-select-dropdown {
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+
+  .el-select-dropdown__item {
+    padding: 12px 20px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+    }
+
+    &.selected {
+      background-color: #667eea;
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
