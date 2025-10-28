@@ -11,7 +11,8 @@ const useUserStore = defineStore(
       name: '',
       avatar: '',
       roles: [],
-      permissions: []
+      permissions: [],
+      isActivated: false,
     }),
     actions: {
       // 登录
@@ -31,7 +32,7 @@ const useUserStore = defineStore(
         })
       },
       // 获取用户信息
-      getInfo() {
+      getInfo(activationStatus) {
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
             const user = res.user
@@ -46,6 +47,19 @@ const useUserStore = defineStore(
             this.id = user.userId
             this.name = user.userName
             this.avatar = avatar
+
+            if (activationStatus !== undefined) {
+              this.isActivated = activationStatus
+            }
+
+
+            console.log('🎯 UserStore 用户信息更新:', {
+              name: this.name,
+              roles: this.roles,
+              isActivated: this.isActivated,
+              activationStatus: activationStatus
+            });
+            
             resolve(res)
           }).catch(error => {
             reject(error)
@@ -59,13 +73,15 @@ const useUserStore = defineStore(
             this.token = ''
             this.roles = []
             this.permissions = []
+            this.isActivated = false
             removeToken()
             resolve()
           }).catch(error => {
             reject(error)
           })
         })
-      }
+      },
+
     }
   })
 
