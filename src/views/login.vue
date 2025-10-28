@@ -6,9 +6,9 @@
         <div class="logo-section">
           <div class="logo-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
             </svg>
           </div>
           <h1 class="brand-title">OpenTalent</h1>
@@ -41,51 +41,38 @@
           <h2 class="login-title">欢迎回来</h2>
           <p class="login-subtitle">请登录您的账户</p>
         </div>
-        
+
         <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
           <el-form-item prop="username">
-            <el-input
-              v-model="loginForm.username"
-              type="text"
-              size="large"
-              auto-complete="off"
-              placeholder="请输入用户名"
-              class="custom-input"
-            >
+            <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="请输入用户名"
+              class="custom-input">
               <template #prefix>
-                <el-icon class="input-icon"><User /></el-icon>
+                <el-icon class="input-icon">
+                  <User />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
-          
+
           <el-form-item prop="password">
-            <el-input
-              v-model="loginForm.password"
-              type="password"
-              size="large"
-              auto-complete="off"
-              placeholder="请输入密码"
-              class="custom-input"
-              @keyup.enter="handleLogin"
-            >
+            <el-input v-model="loginForm.password" type="password" size="large" auto-complete="off" placeholder="请输入密码"
+              class="custom-input" @keyup.enter="handleLogin">
               <template #prefix>
-                <el-icon class="input-icon"><Lock /></el-icon>
+                <el-icon class="input-icon">
+                  <Lock />
+                </el-icon>
               </template>
             </el-input>
           </el-form-item>
-          
+
           <el-form-item prop="code" v-if="captchaEnabled">
             <div class="captcha-container">
-              <el-input
-                v-model="loginForm.code"
-                size="large"
-                auto-complete="off"
-                placeholder="验证码"
-                class="custom-input captcha-input"
-                @keyup.enter="handleLogin"
-              >
+              <el-input v-model="loginForm.code" size="large" auto-complete="off" placeholder="验证码"
+                class="custom-input captcha-input" @keyup.enter="handleLogin">
                 <template #prefix>
-                  <el-icon class="input-icon"><Key /></el-icon>
+                  <el-icon class="input-icon">
+                    <Key />
+                  </el-icon>
                 </template>
               </el-input>
               <div class="captcha-image" @click="getCode">
@@ -93,27 +80,21 @@
               </div>
             </div>
           </el-form-item>
-          
+
           <div class="login-options">
             <el-checkbox v-model="loginForm.rememberMe" class="remember-me">
               记住密码
             </el-checkbox>
             <router-link to="/forgot" class="forgot-password">忘记密码？</router-link>
           </div>
-          
+
           <el-form-item class="login-button-item">
-            <el-button
-              :loading="loading"
-              size="large"
-              type="primary"
-              class="login-button"
-              @click.prevent="handleLogin"
-            >
+            <el-button :loading="loading" size="large" type="primary" class="login-button" @click.prevent="handleLogin">
               <span v-if="!loading">登录</span>
               <span v-else>登录中...</span>
             </el-button>
           </el-form-item>
-          
+
           <div class="register-link" v-if="register">
             <span>还没有账户？</span>
             <a href="#" @click.prevent="goToRegister">立即注册</a>
@@ -121,7 +102,7 @@
         </el-form>
       </div>
     </div>
-    
+
     <!-- 底部版权信息 -->
     <div class="footer">
       <span>© 2024 OpenTalent. All rights reserved.</span>
@@ -131,11 +112,11 @@
 
 <script setup>
 import { getCodeImg } from "@/api/login";
-import { 
+import {
   login,
-  orgAdminLogin, 
-  deptAdminLogin, 
-  orgMemberLogin, 
+  orgAdminLogin,
+  deptAdminLogin,
+  orgMemberLogin,
   freelancerLogin,
 } from "@/api/member/member";
 import Cookies from "js-cookie";
@@ -201,7 +182,7 @@ const register = computed(() => {
 const redirect = ref(undefined);
 
 watch(route, (newRoute) => {
-    redirect.value = newRoute.query && newRoute.query.redirect;
+  redirect.value = newRoute.query && newRoute.query.redirect;
 }, { immediate: true });
 
 // 根据用户角色选择对应的登录方法
@@ -210,10 +191,10 @@ function getLoginMethod(username) {
   if (isSystemAdmin(username)) {
     return login;
   }
-  
+
   const userRole = route.query?.userRole;
-  
-  switch(userRole) {
+
+  switch (userRole) {
     case 'orgadmin':
       return orgAdminLogin;
     case 'deptadmin':
@@ -254,7 +235,7 @@ function handleLogin() {
       // 根据用户名和角色选择对应的登录方法
       const loginMethod = getLoginMethod(loginForm.value.username);
       const userRole = route.query?.userRole;
-      
+
       console.log('当前登录角色:', userRole);
       console.log('使用的登录方法:', loginMethod.name);
 
@@ -265,19 +246,18 @@ function handleLogin() {
             setToken(loginRes.token);
             userStore.token = loginRes.token;
           }
-          
+
+          if (loginRes.isActivated !== undefined) {
+            userStore.isActivated = loginRes.isActivated;
+          }
+
           // 处理后端返回的用户角色信息
           if (loginRes.userRole) {
             console.log('后端返回的用户角色:', loginRes.userRole);
           }
-          
-          // 处理激活状态
-          if (loginRes.isActivated === false) {
-            proxy.$modal.msgWarning(loginRes.message || "账号未激活，请前往个人中心完善信息并进行实名认证");
-          }
-          
+
           // 登录成功后获取用户信息
-          return userStore.getInfo();
+          return userStore.getInfo(loginRes.isActivated);
         })
         .then(() => {
           // 获取用户信息成功后，生成动态路由
@@ -286,51 +266,58 @@ function handleLogin() {
         .then(() => {
           // 动态路由加载完成后，进行跳转
           loading.value = false;
-          
+
           // 获取用户角色（从roles数组中获取）
           const userRoles = userStore.roles || []; // 确保是数组
           const userRole = userRoles.length > 0 ? userRoles[0] : null; // 获取第一个角色
+          const isActivated = userStore.isActivated;
           console.log('登录成功后的用户角色:', userRole);
-          console.log("token值",userStore.token);
+          console.log("token值", userStore.token);
+          console.log('用户激活状态:', isActivated);
 
           // 根据角色确定跳转路径
-          let targetPath = '/'; // 默认首页
-          
-         switch(userRole) {
-          case 'admin':
-            targetPath = '/system/user'; // 系统管理员跳转到用户管理
-            break;
-          case 'root':
-            targetPath = '/admin/member'; // 系统管理员跳转到用户管理
-            break;
-          case 'org_admin':
-            targetPath = '/org/orgcenter'; // 组织管理员跳转到组织中心
-            break;
-          case 'dept_admin':
-            targetPath = '/dept/userinfo'; // 部门管理员跳转到部门管理
-            break;
-          case 'org_member':
-            targetPath = '/user/profile'; // 组织成员跳转到个人中心
-            break;
-          case 'freelancer':
-            targetPath = '/'; // 自由职业者跳转到首页
-            break;
-          default:
-            targetPath = '/'; // 默认首页
-        }
-          
+          let targetPath = '/'; // 默认首页\
+
+
+          if (!isActivated && (userRole === 'freelancer' || userRole === 'org_member')) {
+            targetPath = '/user/profile';
+            proxy.$modal.msgWarning("账号未激活，请到个人中心完善信息并进行实名认证");
+          } else {
+            switch (userRole) {
+              case 'admin':
+                targetPath = '/system/user'; // 系统管理员跳转到用户管理
+                break;
+              case 'root':
+                targetPath = '/admin/member'; // 系统管理员跳转到用户管理
+                break;
+              case 'org_admin':
+                targetPath = '/org/orgcenter'; // 组织管理员跳转到组织中心
+                break;
+              case 'dept_admin':
+                targetPath = '/dedept_adminpt/userinfo'; // 部门管理员跳转到部门管理
+                break;
+              case 'org_member':
+                targetPath = '/user/profile'; // 组织成员跳转到个人中心
+                break;
+              case 'freelancer':
+                targetPath = '/'; // 自由职业者跳转到首页
+                break;
+              default:
+                targetPath = '/'; // 默认首页
+            }
+          }
           // 跳转到目标页面
           router.push({ path: targetPath });
         })
         .catch(loginErr => {
           console.log('登录失败:', loginErr);
           loading.value = false;
-          
+
           // 显示错误信息
           if (loginErr.message) {
             proxy.$modal.msgError(loginErr.message);
           }
-          
+
           // 重新获取验证码
           if (captchaEnabled.value) {
             getCode();
@@ -365,7 +352,7 @@ function goToRegister() {
   // 使用query参数传递type参数
   router.push({
     path: '/register',
-    query: { type: loginUserType.value}
+    query: { type: loginUserType.value }
   });
 }
 
