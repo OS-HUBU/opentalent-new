@@ -248,7 +248,7 @@ function handleLogin() {
           }
 
           if (loginRes.isActivated !== undefined) {
-            userStore.isActivated = loginRes.isActivated;
+            userStore.setActivated(loginRes.isActivated);
           }
 
           // 处理后端返回的用户角色信息
@@ -257,7 +257,7 @@ function handleLogin() {
           }
 
           // 登录成功后获取用户信息
-          return userStore.getInfo(loginRes.isActivated);
+          return userStore.getInfo();
         })
         .then(() => {
           // 获取用户信息成功后，生成动态路由
