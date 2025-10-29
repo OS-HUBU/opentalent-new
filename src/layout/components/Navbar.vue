@@ -13,9 +13,12 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <router-link to="/user/profile">
-                <el-dropdown-item>个人中心</el-dropdown-item>
+              <router-link :to="isAdmin ? '/' : '/user/profile'">
+                <el-dropdown-item>{{ isAdmin ? '返回首页' : '个人中心' }}</el-dropdown-item>
               </router-link>
+              <!-- <router-link to="/user/profile">
+                <el-dropdown-item>个人中心</el-dropdown-item>
+              </router-link> -->
               <el-dropdown-item divided command="logout">
                 <span>退出登录</span>
               </el-dropdown-item>
@@ -39,6 +42,11 @@ import useSettingsStore from '@/store/modules/settings'
 const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
+
+const isAdmin = computed(() => {
+  const userRoles = userStore.roles || []
+  return userRoles.includes('org_admin') || userRoles.includes('dept_admin')
+})
 
 function toggleSideBar() {
   appStore.toggleSideBar()

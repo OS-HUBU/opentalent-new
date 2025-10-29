@@ -6,9 +6,12 @@
     </div>
     <el-menu mode="horizontal" :router="false" :default-active="activeIndex">
       <el-menu-item index="/index" @click="handleMenuClick('/index')">首页</el-menu-item>
-      <el-menu-item v-if="shouldShowContribution" index="/contribution" @click="handleMenuClick('/contribution')">个人开源贡献详情</el-menu-item>
-      <el-menu-item v-if="shouldShowOrgRanking" index="/org-ranking" @click="handleMenuClick('/org-ranking')">组织贡献度排行榜</el-menu-item>
-      <el-menu-item v-if="shouldShowDevRanking" index="/dev-ranking" @click="handleMenuClick('/dev-ranking')">开发者贡献度排行榜</el-menu-item>
+      <el-menu-item v-if="shouldShowContribution" index="/contribution"
+        @click="handleMenuClick('/contribution')">个人开源贡献详情</el-menu-item>
+      <el-menu-item v-if="shouldShowOrgRanking" index="/org-ranking"
+        @click="handleMenuClick('/org-ranking')">组织贡献度排行榜</el-menu-item>
+      <el-menu-item v-if="shouldShowDevRanking" index="/dev-ranking"
+        @click="handleMenuClick('/dev-ranking')">开发者贡献度排行榜</el-menu-item>
       <el-menu-item index="ecosystem" @click="handleEcosystemClick($event)">全球开源生态全景图</el-menu-item>
     </el-menu>
 
@@ -37,10 +40,22 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="profile">个人中心</el-dropdown-item>
+            <!-- 根据角色显示不同菜单项 -->
+            <el-dropdown-item v-if="userRoles.includes('org_admin') || userRoles.includes('dept_admin')" command="admin">
+              后台管理
+            </el-dropdown-item>
+            <el-dropdown-item v-else command="profile">
+              个人中心
+            </el-dropdown-item>
             <el-dropdown-item divided command="logout">注销登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
+        <!-- <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="profile">个人中心</el-dropdown-item>
+            <el-dropdown-item divided command="logout">注销登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template> -->
       </el-dropdown>
     </div>
   </el-header>
@@ -184,11 +199,22 @@ export default {
       });
     },
     handleCommand(command) {
-      if (command === 'profile') {
+      if (command === 'admin') {
+         if (this.userRoles.includes('org_admin')) {
+          this.$router.push('/org/orgcenter'); // 组织管理员跳转到组织中心
+        } else if (this.userRoles.includes('dept_admin')) {
+          this.$router.push('/dept_admin/userinfo'); // 部门管理员跳转到部门管理
+        }
+      } else if (command === 'profile') {
         this.$router.push('/user/profile');
       } else if (command === 'logout') {
         this.logout();
       }
+      // if (command === 'profile') {
+      //   this.$router.push('/user/profile');
+      // } else if (command === 'logout') {
+      //   this.logout();
+      // }
     },
     updateUserInfo() {
       if (this.isLoggedIn) {
