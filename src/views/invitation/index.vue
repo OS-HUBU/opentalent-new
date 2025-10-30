@@ -222,7 +222,7 @@ function submitOpinion() {
       const status = currentAction.value === 'accept' ? 'approved' : 'rejected'
       
       // 调用API处理邀请
-      processInvitation(currentRecordId.value, status, opinionForm.handlerOpinion)
+      approveInvitation(currentRecordId.value, status, opinionForm.handlerOpinion)
         .then(response => {
           submitLoading.value = false
           if (response.code === 200) {

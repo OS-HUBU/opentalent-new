@@ -36,9 +36,10 @@ const checkRolePermission = (userRoles, path) => {
 
   // freelancer和orgmember未激活时不能访问/contribution
   const userStore = useUserStore();
+  const isActivated = userStore.isActivated;
   if (
     (userRoles.includes("freelancer") || userRoles.includes("org_member")) &&
-    !userStore.isActivated
+    !isActivated
   ) {
     if (path === "/contribution") {
       return {
@@ -105,17 +106,6 @@ router.beforeEach((to, from, next) => {
           NProgress.done();
           return;
         }
-        // if (!checkRolePermission(userRoles, to.path)) {
-        //   ElMessage({
-        //     message: "您没有权限访问该页面",
-        //     type: "warning",
-        //     duration: 3000,
-        //     showClose: true,
-        //   });
-        //   next("/"); // 重定向到首页
-        //   NProgress.done();
-        //   return;
-        // }
         next();
       }
     }

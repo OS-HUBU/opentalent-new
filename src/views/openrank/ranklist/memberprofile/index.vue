@@ -151,51 +151,11 @@ export default {
           isSelf: true  // 添加阴影效果
 
         },
-      ],
-      fitScale: 1,
-      fitWrapperHeight: 0,
-      fitOffsetX: 0,
-      fitOffsetY: 0,
-      fitWrapperWidth: 0
+      ]
     }
   },
 
   methods: {
-    // 屏幕适配缩放
-    updateFitScale() {
-      const wrapper = this.$refs.fitWrapper
-      const content = this.$refs.fitContent
-      if (!wrapper || !content) return
-      // 先复位以获取真实内容尺寸
-      this.fitScale = 1
-      this.$nextTick(() => {
-        const rect = wrapper.getBoundingClientRect()
-        const availableW = Math.max(0, window.innerWidth - rect.left)
-        const availableH = Math.max(0, window.innerHeight - rect.top)
-        // 设置容器高度以避免页面滚动
-        this.fitWrapperHeight = Math.floor(availableH)
-        const contentW = content.scrollWidth || content.clientWidth
-        const contentH = content.scrollHeight || content.clientHeight
-        const scaleX = contentW ? availableW / contentW : 1
-        const scaleY = contentH ? availableH / contentH : 1
-        // 使用“包含式缩放”，保证内容完整可见、不裁切
-         let scale = Math.min(scaleX, scaleY)
-         if (!isFinite(scale) || scale <= 0) scale = 1
-         this.fitScale = scale
-         // 居中显示（不随缩放改变平移距离）
-         const visibleW = (contentW || 0) * this.fitScale
-         const visibleH = (contentH || 0) * this.fitScale
-         const offsetX = (availableW - visibleW) / 2
-         const offsetY = (availableH - visibleH) / 2
-         this.fitOffsetX = isFinite(offsetX) ? offsetX : 0
-         this.fitOffsetY = isFinite(offsetY) ? offsetY : 0
-         this.fitWrapperWidth = Math.floor(availableW)
-      })
-    },
-    handleResize() {
-      this.updateFitScale()
-    },
-
     // 生成仓库排名图标
     generateRankIconStyle() {
       const richStyles = {};
@@ -761,6 +721,7 @@ export default {
         color: this.tableColor,
         tooltip: {
           trigger: 'item',
+          appendToBody: true 
         },
         radar: {
           radius: 72,
@@ -915,13 +876,6 @@ export default {
     } catch (error) {
       console.error("数据加载失败:", error);
     }
-    // 初次适配并绑定窗口变化
-    this.$nextTick(() => this.updateFitScale());
-    window.addEventListener('resize', this.handleResize);
-  },
-
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize);
   },
 
 }
@@ -929,8 +883,7 @@ export default {
 </script>
 
 <template #default="scope">
-  <div class="screen-fit-wrapper" ref="fitWrapper" :style="{ height: fitWrapperHeight + 'px', width: (fitWrapperWidth ? fitWrapperWidth + 'px' : '100%'), overflow: 'hidden' }">
-    <div class="member-profile screen-fit-content" ref="fitContent" :style="{ transform: 'translate(' + fitOffsetX + 'px, ' + fitOffsetY + 'px) scale(' + fitScale + ')', transformOrigin: 'top left' }">
+  <div class="member-profile">
     <el-main>
       <div class="metrics-grid">
         <!-- 卡片 1 用户信息-->
@@ -960,7 +913,7 @@ export default {
             </div>
           </div>
           <div class="user-metrics">
-            <span>位置: {{ userData.location ||'未知' }}</span>
+            <span>位置: {{ userData.location || '未知' }}</span>
           </div>
         </el-card>
 
@@ -995,8 +948,8 @@ export default {
             <img src="../../../../assets/images/star.png" class="detail-img">
             <div class="title">Star数量</div>
             <div class="number-data-container">
-              <div class="number">{{ repoData.repoNum }}</div>
-              <div class="data">{{ repoData.currentMonth }}</div>
+              <div class="number">{{ starData.starNum }}</div>
+              <div class="data">{{ starData.currentMonth }}</div>
             </div>
             <div class="detail-container">
               <img
@@ -1020,8 +973,8 @@ export default {
             <img src="../../../../assets/images/openrank.png" class="detail-img">
             <div class="title">OpenRank</div>
             <div class="number-data-container">
-              <div class="number">{{ repoData.repoNum }}</div>
-              <div class="data">{{ repoData.currentMonth }}</div>
+              <div class="number">{{ openrankData.currentOpenrank }}</div>
+              <div class="data">{{ openrankData.currentMounth }}</div>
             </div>
             <div class="detail-container">
               <img
@@ -1045,8 +998,8 @@ export default {
             <img src="../../../../assets/images/activity.png" class="detail-img">
             <div class="title">活跃度</div>
             <div class="number-data-container">
-              <div class="number">{{ repoData.repoNum }}</div>
-              <div class="data">{{ repoData.currentMonth }}</div>
+              <div class="number">{{ activityData.currentActivity }}</div>
+              <div class="data">{{ activityData.currentMonth }}</div>
             </div>
             <div class="detail-container">
 
@@ -1095,7 +1048,7 @@ export default {
                 <el-date-picker v-model="endDate" type="month" :placeholder="`${defaultEndMonth}`" format="YYYY-MM"
                   value-format="YYYY-MM"
                   :picker-options="{ disabledDate: (time) => { if (startDate) { return time.getTime() < new Date(startDate).getTime(); } return false; } }"
-                  @change="handleEndDateChange" style="width: 150px;"  />
+                  @change="handleEndDateChange" style="width: 150px;" />
               </div>
             </div>
 
@@ -1177,20 +1130,15 @@ export default {
       </div>
 
     </el-main>
-     </div>
-   </div>
+  </div>
 
 </template>
 
 
 <style scoped>
+
 .member-profile {
-  background-color: #F8F8F8
-}
-.metrics-grid,
-.metrics-grid-2,
-.metrics-grid-3 {
-  overflow: hidden; 
+  background-color: #F8F8F8;
 }
 
 .card {
@@ -1201,6 +1149,7 @@ export default {
 .metrics-grid,
 .metrics-grid-3,
 .metrics-grid-2 {
+  overflow: hidden;
   margin-bottom: 10px;
   padding-top: 5px;
   display: flex;
@@ -1252,11 +1201,12 @@ export default {
 }
 
 
-
-/**暂时设置 */
 .category-card {
+  flex:4;
   height: 280px;
+  overflow: visible !important;
 }
+
 
 /* 响应式处理 - 小屏幕自动换行 */
 @media (max-width: 768px) {
@@ -1592,12 +1542,6 @@ export default {
 }
 
 /* 第三行贡献类别卡片 */
-.category-card {
-  flex: 4;
-  width: 0;
-  overflow: visible !important;
-}
-
 .source-card {
   flex: 6;
   width: 0;

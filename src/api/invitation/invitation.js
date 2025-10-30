@@ -12,10 +12,9 @@ export function listInvitation(query) {
 
 export function approveInvitation(id, status,handlerOpinion) {
   return request({
-    url: '/invite/application/handle/{id}',
+    url: `/invite/application/handle/${id}`,
     method: 'put',
     params: {
-      id: id,
       status: status,
       handlerOpinion: handlerOpinion
     }
