@@ -12,7 +12,8 @@ const useUserStore = defineStore(
       avatar: '',
       roles: [],
       permissions: [],
-      isActivated: false,
+      isActivated: localStorage.getItem('isActivated') === 'true' || false, 
+      //isActivated: false,
     }),
     actions: {
       // 登录
@@ -32,7 +33,7 @@ const useUserStore = defineStore(
         })
       },
       // 获取用户信息
-      getInfo(activationStatus) {
+      getInfo() {
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
             const user = res.user
@@ -48,24 +49,26 @@ const useUserStore = defineStore(
             this.name = user.userName
             this.avatar = avatar
 
-            if (activationStatus !== undefined) {
-              this.isActivated = activationStatus
+            // 从localStorage获取激活状态，如果没有则保持当前值
+            const storedActivated = localStorage.getItem('isActivated')
+            if (storedActivated !== null) {
+              this.isActivated = storedActivated === 'true'
             }
 
-
-            console.log('🎯 UserStore 用户信息更新:', {
-              name: this.name,
-              roles: this.roles,
-              isActivated: this.isActivated,
-              activationStatus: activationStatus
-            });
-            
             resolve(res)
           }).catch(error => {
             reject(error)
           })
         })
       },
+
+      // 设置激活状态
+      setActivated(status) {
+        this.isActivated = status
+        // 持久化存储到localStorage
+        localStorage.setItem('isActivated', status.toString())
+      },
+
       // 退出系统
       logOut() {
         return new Promise((resolve, reject) => {
@@ -75,6 +78,7 @@ const useUserStore = defineStore(
             this.permissions = []
             this.isActivated = false
             removeToken()
+            localStorage.removeItem('isActivated')
             resolve()
           }).catch(error => {
             reject(error)
