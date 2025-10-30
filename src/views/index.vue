@@ -41,11 +41,9 @@
 
           <div class="powered-by">
             <div style="font-size: 20px; display: inline-block; margin-right: 30px" >Powered by</div>
-            <img src="@/assets/images/ecnuLogo-white.png" class="powered-logo">
+             <img src="@/assets/images/OS-HUBU.png" class="powered-logo">
             <div class="short-line"></div>
             <img src="@/assets/images/XLabLogo-white.png" class="powered-logo">
-            <div class="short-line"></div>
-            <img src="@/assets/images/OS-HUBU.png" class="powered-logo">
             <div class="short-line"></div>
             <img src="@/assets/images/openTalentLogo-white.png" class="powered-logo">
           </div>
