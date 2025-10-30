@@ -1,113 +1,114 @@
 <template>
-  <!-- header -->
-  <div class="header">
-    <div class="search">
-      <label style="line-height: 31px;">搜索：</label>
-      <el-input
-        v-model="userName"
-        placeholder="请输入自由职业者的用户名/平台账号"
-        style="width: 400px"
-        @keyup.enter="handleSearch"
-        @input="handleInput"
-      ></el-input>
+  <div class="app-container">
+    <!-- header -->
+    <div class="header">
+      <div class="search">
+        <label style="line-height: 31px">搜索：</label>
+        <el-input
+          v-model="userName"
+          placeholder="请输入自由职业者的用户名/平台账号"
+          @keyup.enter="handleSearch"
+          @input="handleInput"
+        ></el-input>
+      </div>
     </div>
-  </div>
-  <div class="content">
-    <div class="wrapper">
-      <p class="tips">当前仅展示自由职业者</p>
-      <el-table
-        :data="filteredUsers"
-        height="300px"
-        style="width: 100%"
-        :cell-style="{ textAlign: 'center' }"
-        :header-cell-style="{ textAlign: 'center' }"
-      >
-        <el-table-column label="用户名（角色）" fixed>
-          <template #default="scope">
-            <span
-              class="user-name"
-              v-html="highlightMatch(scope.row.userName, searchKeyword)"
-            ></span>
-            <span class="sign">自由职业者</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="平台账号" width="250px">
-          <template #default="scope">
-            <div
-              v-if="
-                scope.row.platformAccounts &&
-                scope.row.platformAccounts.length > 0
-              "
-              class="platform-accounts-container"
-            >
-              <el-tag
-                v-for="(account, index) in scope.row.platformAccounts"
-                :key="index"
-                :type="account.platformName === 'GitHub' ? 'primary' : 'success'"
-                size="small"
-                class="platform-tag"
+    <div class="content">
+      <div class="wrapper">
+        <p class="tips">当前仅展示自由职业者</p>
+        <el-table
+          :data="filteredUsers"
+          height="300px"
+          style="width: 100%"
+          :cell-style="{ textAlign: 'center' }"
+          :header-cell-style="{ textAlign: 'center' }"
+        >
+          <el-table-column label="用户名（角色）" fixed>
+            <template #default="scope">
+              <span
+                class="user-name"
+                v-html="highlightMatch(scope.row.userName, searchKeyword)"
+              ></span>
+              <span class="sign">自由职业者</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="平台账号" width="250px">
+            <template #default="scope">
+              <div
+                v-if="
+                  scope.row.platformAccounts &&
+                  scope.row.platformAccounts.length > 0
+                "
+                class="platform-accounts-container"
               >
-                {{ account.platformName }}: {{ account.platformUsername }}
-              </el-tag>
-            </div>
-            <span v-else>-</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱" />
-        <el-table-column prop="location" label="位置" />
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" @click="openInviteDialog(scope.row)"
-              >邀请加入</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+                <el-tag
+                  v-for="(account, index) in scope.row.platformAccounts"
+                  :key="index"
+                  :type="
+                    account.platformName === 'GitHub' ? 'primary' : 'success'
+                  "
+                  size="small"
+                  class="platform-tag"
+                >
+                  {{ account.platformName }}: {{ account.platformUsername }}
+                </el-tag>
+              </div>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="email" label="邮箱" />
+          <el-table-column prop="location" label="位置" />
+          <el-table-column label="操作">
+            <template #default="scope">
+              <el-button type="primary" @click="openInviteDialog(scope.row)"
+                >邀请加入</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
-  </div>
 
-  <div class="list">
-    <div class="invite-wrapper">
-      <el-table
-        :data="totalData"
-        style="width: 100%"
-        :cell-style="{ textAlign: 'center' }"
-        :header-cell-style="{ textAlign: 'center' }"
-      >
-        <el-table-column prop="userName" label="邀请对象" />
-        <el-table-column prop="submitTime" label="邀请时间" />
-        <el-table-column prop="status" label="当前状态" />
-        <el-table-column prop="operation" label="操作">
-          <template #default="scope">
-            <el-button
-              :disabled="scope.row.status !== '待处理'"
-              :class="{
-                danger: scope.row.status === '待处理',
-                info: scope.row.status !== '待处理',
-              }"
-              @click="handleCancelInvite(scope.row.id)"
-              >撤销</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+    <div class="list">
+      <div class="invite-wrapper">
+        <el-table
+          :data="totalData"
+          style="width: 100%"
+          :cell-style="{ textAlign: 'center' }"
+          :header-cell-style="{ textAlign: 'center' }"
+        >
+          <el-table-column prop="userName" label="邀请对象" />
+          <el-table-column prop="submitTime" label="邀请时间" />
+          <el-table-column prop="status" label="当前状态" />
+          <el-table-column prop="operation" label="操作">
+            <template #default="scope">
+              <el-button
+                :disabled="scope.row.status !== '待处理'"
+                :class="{
+                  danger: scope.row.status === '待处理',
+                  info: scope.row.status !== '待处理',
+                }"
+                @click="handleCancelInvite(scope.row.id)"
+                >撤销</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
 
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20,30,50]"
-          :total="inviteRecords.length"
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          @current-change="handleCurrentPageChange"
-        />
-
+        <!-- 分页 -->
+        <div class="pagination-container">
+          <el-pagination
+            v-model:current-page="currentPage"
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 30, 50]"
+            :total="inviteRecords.length"
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            @current-change="handleCurrentPageChange"
+          />
+        </div>
       </div>
     </div>
   </div>
- 
 
   <!-- 邀请附言弹框 -->
   <el-dialog
@@ -164,7 +165,6 @@ import {
   cancelInvite,
 } from "@/api/invite";
 import { ElMessage } from "element-plus";
-
 
 const inviteList = ref([]);
 const inviteRecords = ref([]);
@@ -329,7 +329,7 @@ const handleCancelInvite = async (inviteId) => {
     // status.value = '已撤销';
     console.log("撤销邀请", result);
     console.log("撤销邀请记录", inviteRecords.value);
-    
+
     fetchInviteRecord();
     ElMessage.success("撤销邀请成功");
   } catch (error) {
@@ -356,6 +356,7 @@ const handleCurrentPageChange = (page) => {
   .search {
     display: flex;
     margin-bottom: 5px;
+    width: 400px;
     .el-input--default {
       flex: 1;
       margin-right: 10px;
@@ -434,7 +435,6 @@ const handleCurrentPageChange = (page) => {
   color: #fff !important;
   opacity: 1 !important;
 }
-
 
 .el-button.is-disabled {
   background-color: #909399 !important;
