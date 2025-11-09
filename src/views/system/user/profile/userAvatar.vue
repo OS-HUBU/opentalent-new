@@ -140,8 +140,6 @@ function closeDialog() {
   height: 90px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #ebeef5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
   
