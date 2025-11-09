@@ -11,7 +11,8 @@ import { getUserinfo, getUserDetail } from "@/api/userinfo/userinfo";
 import increaseIcon from "@/assets/images/up.png";
 import downIcon from "@/assets/images/down.png";
 import noChangeIcon from "@/assets/images/nochange.png";
-import defaultAvatar from '@/assets/images/profile.jpg'
+// import defaultAvatar from '@/assets/images/profile.jpg'
+import defaultAvatar from '@/assets/images/default-avatar.svg';
 import rank1 from "@/assets/images/rank1.png";
 import rank2 from "@/assets/images/rank2.png";
 import rank3 from "@/assets/images/rank3.png";
@@ -249,48 +250,48 @@ export default {
     },
 
 
-    // 获取月度详情数据
+    // 获取本人贡献数据
     async getDetailData() {
       try {
         const response = await getDetail(this.userId);
-        console.log("月度详情数据", response);
+        console.log("本人贡献数据", response);
         if (response.code === 200) {
           this.detailData = response.data[0];
-          this.userData.platformName = response.data[0].platformName;
+          //this.userData.platformName = response.data[0].platformName;
         }
         return response;
       } catch (error) {
-        console.error("获取详情数据失败:", error);
+        console.error("获取本人贡献失败:", error);
       }
     },
 
 
-    //获取领域平均数据
+    //获取平均贡献数据
     async getAverageData() {
       try {
         const response = await getAverage();
-        //console.log("领域平均数据", response);
+        console.log("平均贡献数据", response);
         if (response.code === 200) {
           this.averageData = response.data;
         }
         return response;
       } catch (error) {
-        console.error("获取领域平均数据失败:", error);
+        console.error("获取平均贡献数据失败:", error);
       }
     },
 
 
-    //获取领域标杆数据
+    //获取最大贡献数据
     async getMaxData() {
       try {
         const response = await getMax();
-        //console.log("领域标杆数据", response);
+        console.log("最大贡献数据", response);
         if (response.code === 200) {
           this.maxData = response.data;
         }
         return response;
       } catch (error) {
-        console.error("获取领域标杆数据失败:", error);
+        console.error("获取最大贡献数据失败:", error);
       }
     },
 
@@ -310,7 +311,6 @@ export default {
 
         if (openrankRes.code === 200) {
           this.trendData.openrank = openrankRes.data;
-          // 计算当前/上月 openrank 用于头部卡片
           const or = this.trendData.openrank;
           if (or.length >= 2) {
             const last = or[or.length - 1].openrank;
@@ -354,6 +354,42 @@ export default {
         console.error("获取趋势数据失败:", error);
         return false;
       }
+    },
+
+    // 禁用大于当前月份的时间
+    disableFutureMonths(time) {
+      const current = new Date();
+      const currentYear = current.getFullYear();
+      const currentMonth = current.getMonth();
+
+      return time.getFullYear() > currentYear ||
+        (time.getFullYear() === currentYear && time.getMonth() > currentMonth);
+    },
+
+    // 开始日期的禁用规则
+    disableStartDate(time) {
+      // 不能选择未来月份
+      if (this.disableFutureMonths(time)) {
+        return true;
+      }
+      // 不能大于结束日期
+      if (this.endDate) {
+        return time.getTime() > new Date(this.endDate).getTime();
+      }
+      return false;
+    },
+
+    // 结束日期的禁用规则
+    disableEndDate(time) {
+      // 不能选择未来月份
+      if (this.disableFutureMonths(time)) {
+        return true;
+      }
+      // 不能小于开始日期
+      if (this.startDate) {
+        return time.getTime() < new Date(this.startDate).getTime();
+      }
+      return false;
     },
 
     // 处理开始日期变更
@@ -452,7 +488,6 @@ export default {
 
       let orBarChart = echarts.init(document.getElementById("orBarChart"))
 
-      // 计算Y轴最大值（留有余地）
       const maxActivity = Math.max(...processedData.activity);
       const maxOpenrank = Math.max(...processedData.openrank);
       const maxValue = Math.max(maxActivity, maxOpenrank);
@@ -631,7 +666,6 @@ export default {
       const chartData = top5Data.map(item => item.repoOpenrank).reverse();
       const chartDom = document.getElementById("sourceBarChart");
 
-      // 清除现有内容（避免图表与文本重叠）
       chartDom.innerHTML = '';
 
       // 如果没有数据，显示居中提示
@@ -715,13 +749,128 @@ export default {
     },
 
     //贡献类别
+    // drawRadarChart() {
+    //   let chart = echarts.init(document.getElementById("radarChart"))
+    //   chart.setOption({
+    //     color: this.tableColor,
+    //     tooltip: {
+    //       trigger: 'item',
+    //       appendToBody: true 
+    //     },
+    //     radar: {
+    //       radius: 72,
+    //       center: ['58%', '35%'],
+    //       name: {
+    //         textStyle: {
+    //           fontSize: 16,
+    //           padding: [-10, -2],
+    //           color: '#000',
+    //         }
+    //       },
+    //       indicator: [
+    //         { name: 'Open Issue' },
+    //         { name: 'Issue Comment' },
+    //         { name: 'Open PR' },
+    //         { name: 'PR Comment' },
+    //         { name: 'PR Merged' },
+    //         { name: 'Star' },
+    //         { name: 'Fork' },
+    //       ]
+    //     },
+    //     series: [
+    //       {
+    //         type: 'radar',
+    //         data: [
+    //           {
+    //             value: [this.maxData.maxOpenIssue,
+    //             this.maxData.maxFork,
+    //             this.maxData.maxStar,
+    //             this.maxData.maxPrMerged,
+    //             this.maxData.maxPrComment,
+    //             this.maxData.maxOpenPr,
+    //             this.maxData.maxIssueComment],
+    //             name: '最大贡献',
+    //             areaStyle: {
+    //               color: 'rgba(20, 184, 166, 0.1)'
+    //             }
+    //           },
+    //           {
+    //             value: [this.averageData.avgOpenIssue,
+    //             this.averageData.avgFork,
+    //             this.averageData.avgStar,
+    //             this.averageData.avgPrMerged,
+    //             this.averageData.avgPrComment,
+    //             this.averageData.avgOpenPr,
+    //             this.averageData.avgIssueComment],
+    //             name: '平均贡献',
+    //             areaStyle: {
+    //               color: 'rgba(59, 130, 246, 0.3)'
+    //             }
+    //           },
+    //           {
+    //             value: [this.detailData.openIssue,
+    //             this.detailData.fork,
+    //             this.detailData.star,
+    //             this.detailData.prMerged,
+    //             this.detailData.prComment,
+    //             this.detailData.openPr,
+    //             this.detailData.issueComment],
+    //             name: '本人贡献',
+    //             areaStyle: {
+    //               color: "rgba(236, 72, 153, 0.5)",
+    //               opacity: 0.6,
+    //             },
+    //           },
+    //         ]
+    //       }
+    //     ]
+    //   })
+
+    // },
+    // 修改drawRadarChart方法
     drawRadarChart() {
-      let chart = echarts.init(document.getElementById("radarChart"))
+      const chartDom = document.getElementById("radarChart");
+      chartDom.innerHTML = '';
+
+      // 1. 处理个人详情数据（无数据时为长度0的数组）
+      const detailData = Array.isArray(this.detailData) ? this.detailData : [];
+      // 个人详情有数据的判断：数组长度 > 0 且至少有一个有效数值
+      const hasDetailData = detailData.length > 0 &&
+        detailData.some(value => value > 0);
+
+      // 2. 处理最大贡献数据（无数据时 response 无 data 字段，即 this.maxData 可能为 undefined）
+      const maxData = this.maxData || {}; // 兜底为空对象
+      // 最大贡献有数据的判断：对象有属性且至少有一个有效数值
+      const hasMaxData = Object.keys(maxData).length > 0 &&
+        Object.values(maxData).some(value => value > 0);
+
+      // 3. 处理平均贡献数据（与最大贡献逻辑一致）
+      const averageData = this.averageData || {};
+      const hasAverageData = Object.keys(averageData).length > 0 &&
+        Object.values(averageData).some(value => value > 0);
+
+      // 4. 所有数据都为空时显示提示
+      if (!hasDetailData && !hasMaxData && !hasAverageData) {
+        chartDom.style.display = 'flex';
+        //chartDom.style.alignItems = 'center';
+        chartDom.style.justifyContent = 'center';
+        chartDom.innerHTML = `
+      <div style="text-align: center; color: #999; font-size: 20px; padding: 20px;">
+        <p>暂无贡献数据</p>
+        <p>请先添加仓库并参与贡献以生成数据</p>
+      </div>
+    `;
+        return;
+      }
+
+      // 5. 有数据时正常绘制图表（补充属性兜底，避免 undefined）
+      chartDom.style.display = '';
+      let chart = echarts.init(chartDom);
       chart.setOption({
         color: this.tableColor,
         tooltip: {
           trigger: 'item',
-          appendToBody: true 
+          appendToBody: true
         },
         radar: {
           radius: 72,
@@ -748,50 +897,42 @@ export default {
             type: 'radar',
             data: [
               {
-                value: [this.maxData.maxOpenIssue,
-                this.maxData.maxFork,
-                this.maxData.maxStar,
-                this.maxData.maxPrMerged,
-                this.maxData.maxPrComment,
-                this.maxData.maxOpenPr,
-                this.maxData.maxIssueComment],
+                value: [
+                  maxData.maxOpenIssue || 0,
+                  maxData.maxIssueComment || 0,
+                  maxData.maxOpenPr || 0,
+                  maxData.maxPrComment || 0,
+                  maxData.maxPrMerged || 0,
+                  maxData.maxStar || 0,
+                  maxData.maxFork || 0
+                ],
                 name: '最大贡献',
-                areaStyle: {
-                  color: 'rgba(20, 184, 166, 0.1)'
-                }
+                areaStyle: { color: 'rgba(20, 184, 166, 0.1)' }
               },
               {
-                value: [this.averageData.avgOpenIssue,
-                this.averageData.avgFork,
-                this.averageData.avgStar,
-                this.averageData.avgPrMerged,
-                this.averageData.avgPrComment,
-                this.averageData.avgOpenPr,
-                this.averageData.avgIssueComment],
+                value: [
+                  averageData.avgOpenIssue || 0,
+                  averageData.avgIssueComment || 0,
+                  averageData.avgOpenPr || 0,
+                  averageData.avgPrComment || 0,
+                  averageData.avgPrMerged || 0,
+                  averageData.avgStar || 0,
+                  averageData.avgFork || 0
+                ],
                 name: '平均贡献',
-                areaStyle: {
-                  color: 'rgba(59, 130, 246, 0.3)'
-                }
+                areaStyle: { color: 'rgba(59, 130, 246, 0.3)' }
               },
               {
-                value: [this.detailData.openIssue,
-                this.detailData.fork,
-                this.detailData.star,
-                this.detailData.prMerged,
-                this.detailData.prComment,
-                this.detailData.openPr,
-                this.detailData.issueComment],
+                value: detailData.map(v => v || 0), // 数组项兜底为0
                 name: '本人贡献',
-                areaStyle: {
-                  color: "rgba(236, 72, 153, 0.5)",
-                  opacity: 0.6,
-                },
-              },
+                areaStyle: { color: "rgba(236, 72, 153, 0.5)", opacity: 0.6 }
+              }
             ]
           }
         ]
-      })
+      });
 
+      window.addEventListener('resize', () => chart.resize());
     },
 
     // 第一阶段：用户基本信息
@@ -800,7 +941,7 @@ export default {
         this.userId = this.$route.query.userId;
         const response = await getUserinfo(this.userId);
         if (response.code === 200) {
-          console.log(response.data.userInfo);
+          //console.log("userinfo",response.data.userInfo);
           this.userData.userName = response.data.userInfo.user_name;
           this.userData.location = response.data.userInfo.location;
           this.userData.sex = response.data.userInfo.sex;
@@ -860,24 +1001,33 @@ export default {
     },
 
   },
-
   async mounted() {
-
     try {
-      // 第一阶段：立即获取用户基本信息（最高优先级）
-      await this.loadUserBasicInfo();
+      // 第一阶段：用户基本信息（最高优先级）
+      const basicInfoPromise = this.loadUserBasicInfo();
 
-      // 第二阶段：并行加载核心数据
-      await this.loadCoreData();
+      // 第二阶段：核心数据并行加载（不等待基本信息完成）
+      const coreDataPromise = this.loadCoreData();
 
-      // 第三阶段：加载次要数据
-      this.loadSecondaryData();
+      // 第三阶段：次要数据并行加载
+      const secondaryDataPromise = this.loadSecondaryData();
+
+      // 等待所有请求完成，但按优先级处理
+      await basicInfoPromise; // 确保用户信息最先显示
+
+      // 核心数据完成后立即渲染核心图表
+      await coreDataPromise;
+      this.drawOrBarChart();
+
+      // 次要数据完成后渲染次要图表
+      await secondaryDataPromise;
+      this.drawSourceBarChart();
+      this.drawRadarChart();
 
     } catch (error) {
       console.error("数据加载失败:", error);
     }
-  },
-
+  }
 }
 
 </script>
@@ -908,7 +1058,7 @@ export default {
                 <span>所在组织: {{ userData.orgName || '无' }}</span>
               </div>
               <div class="user-metrics">
-                <span>平台名称：{{ userData.platformName }}</span>
+                <span>平台名称：{{ userData.platformName || '无' }}</span>
               </div>
             </div>
           </div>
@@ -1034,9 +1184,8 @@ export default {
               </div>
               <div class="month">
                 <el-date-picker v-model="startDate" type="month" :placeholder="`${defaultStartMonth}`" format="YYYY-MM"
-                  value-format="YYYY-MM"
-                  :picker-options="{ disabledDate: (time) => { if (endDate) { return time.getTime() > new Date(endDate).getTime(); } return false; } }"
-                  @change="handleStartDateChange" style="width: 150px;" />
+                  value-format="YYYY-MM" :disabled-date="disableStartDate" @change="handleStartDateChange"
+                  style="width: 150px;" />
               </div>
             </div>
 
@@ -1046,9 +1195,8 @@ export default {
               </div>
               <div class="month">
                 <el-date-picker v-model="endDate" type="month" :placeholder="`${defaultEndMonth}`" format="YYYY-MM"
-                  value-format="YYYY-MM"
-                  :picker-options="{ disabledDate: (time) => { if (startDate) { return time.getTime() < new Date(startDate).getTime(); } return false; } }"
-                  @change="handleEndDateChange" style="width: 150px;" />
+                  value-format="YYYY-MM" :disabled-date="disableEndDate" @change="handleEndDateChange"
+                  style="width: 150px;" />
               </div>
             </div>
 
@@ -1136,7 +1284,6 @@ export default {
 
 
 <style scoped>
-
 .member-profile {
   background-color: #F8F8F8;
 }
@@ -1202,7 +1349,7 @@ export default {
 
 
 .category-card {
-  flex:4;
+  flex: 4;
   height: 280px;
   overflow: visible !important;
 }
