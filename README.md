@@ -94,11 +94,12 @@ npm run dev
 
 如果您有任何问题或建议，请通过以下方式联系我们：
 
-- 项目主页：https://github.com/OS-HUBU/opentalent-new
+- 项目主页：https://gitee.com/os-hubu/opentalent-new.git
+- 项目域名：http://open-talent.hubu.edu.cn
 - 邮箱：921107055@qq.com
 
 ## 支持团队
 
-团队负责人：杨军威	联系方式：921107055@qq.com
+项目负责人：游兰 联系方式：4411736@qq.com
 
-团队成员：
+团队成员：杨军威、金上云、李昆珈、雷永琪、陈乐阳、艾子祺
